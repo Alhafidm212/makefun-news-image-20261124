@@ -5,9 +5,11 @@ One-page newspaper front page, drawn from scratch with the Python
 standard library only (no PIL, no network, no fonts on disk).
 Renders entry.png (1024x1024) from the day's verified headlines.
 
-Run:  python3 main.py            # writes entry.png next to this file
+Run:  python3 main.py            # writes entry.png to $MAKEFUN_OUTPUT_DIR
+                                 # (default /output; the grader mounts /bot read-only)
 """
 import hashlib
+import os
 import struct
 import sys
 import zlib
@@ -269,8 +271,10 @@ def save_png(page, path):
 
 def main():
     page = render()
-    n = save_png(page, "entry.png")
-    digest = hashlib.sha256(open("entry.png", "rb").read()).hexdigest()
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    path = os.path.join(out_dir, "entry.png")
+    n = save_png(page, path)
+    digest = hashlib.sha256(open(path, "rb").read()).hexdigest()
     print("entry.png %dx%d %d bytes sha256 %s" % (W, H, n, digest))
     return 0
 
